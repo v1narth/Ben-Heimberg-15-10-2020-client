@@ -108,7 +108,7 @@ const Compose = () => {
   /**
    * Send message.
    *
-   * @param {Event} event
+   * @param event
    */
   const handleSendMessage = async (event) => {
     event.preventDefault();
