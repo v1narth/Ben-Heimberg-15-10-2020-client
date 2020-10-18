@@ -132,7 +132,7 @@ export const setCurrentList = (value: Message) => (
     messagesSlice.actions[action](
       Array.isArray(list)
         ? [value, ...list]
-        : { ...list, [type]: [value, ...list[type]] }
+        : { ...list, [type]: [value, ...(list[type] ?? [])] }
     )
   );
 };

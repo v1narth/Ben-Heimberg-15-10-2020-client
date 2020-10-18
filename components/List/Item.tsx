@@ -11,6 +11,8 @@ import { RootState } from "~/store";
 import MenuContainer from "../Menu";
 import moment from "moment";
 import { useSelector } from "react-redux";
+import { useMemo } from "react";
+import { generateColor } from "~/utils";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -69,10 +71,22 @@ const ListItem = ({ data, onDelete }: { data: Message; onDelete }) => {
   const { senderId, type } = useSelector((store: RootState) => store.messages);
   const { user } = useSelector((state: RootState) => state.user);
 
+  const itemUserName =
+    user || senderId
+      ? type === "sent"
+        ? data.receiver
+        : data.sender
+      : data.sender ?? data.receiver;
+
   return (
     <div className={classes.listItem}>
       <div className={classes.listItem__info}>
-        <Avatar className={classes.itemInfo__avatar} />
+        <Avatar
+          className={classes.itemInfo__avatar}
+          style={{ background: generateColor(data.id) }}
+        >
+          {itemUserName.substring(0, 1)}
+        </Avatar>
         <span className={classes.itemInfo__sender}>
           {user || senderId ? (
             type === "sent" ? (

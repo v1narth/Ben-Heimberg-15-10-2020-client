@@ -1,5 +1,6 @@
 import { AppBar, createStyles, makeStyles, Toolbar } from "@material-ui/core";
-import Login from "../Login";
+import React from "react";
+import Auth from "../Auth";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -28,7 +29,7 @@ const Header = () => {
     <AppBar className={classes.root} position="static" elevation={0}>
       <Toolbar>
         <div className={classes.userAvatar}>
-          <Login />
+          <Auth />
         </div>
       </Toolbar>
     </AppBar>

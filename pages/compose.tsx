@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { SnackbarContext } from "~/context/snackbar";
 import { RootState } from "~/store";
 import { createMessageAsync } from "~/store/slices/messages";
+import { useRouter } from "next/router";
 import UserSearchField from "~/components/Field/UserSearch";
 
 const useStyles = makeStyles((theme) =>
@@ -84,6 +85,8 @@ const Compose = () => {
   const dispatch = useDispatch();
   const createMessage = (message) => dispatch(createMessageAsync(message));
 
+  const router = useRouter();
+
   useEffect(() => {
     user && setMessageData((curr) => ({ ...curr, sender: user.senderId }));
   }, [user]);
@@ -142,6 +145,7 @@ const Compose = () => {
       return;
     } finally {
       setLoading(false);
+      router.push("/");
     }
   };
 

@@ -7,7 +7,6 @@ import {
 import { grey } from "@material-ui/core/colors";
 import {
   Delete,
-  Reply,
   Print,
   Close,
   EmojiPeople,
@@ -19,6 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { SnackbarContext } from "~/context/snackbar";
 import { RootState } from "~/store";
 import messagesSlice, { deleteMessage } from "~/store/slices/messages";
+import { generateColor } from "~/utils";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -75,11 +75,6 @@ const useStyles = makeStyles((theme) =>
     messageView__body: {
       whiteSpace: "pre-line",
     },
-    // messageView__reply: {
-    //   padding: "11em",
-    //   marginTop: "auto",
-    //   boxShadow: "1px 1px 100px 0 rgb(0 0 0 / 7%)",
-    // },
     messageView__placeholder: {
       display: "flex",
       flexFlow: "column",
@@ -95,6 +90,12 @@ const useStyles = makeStyles((theme) =>
     },
     messageView__placeholderText: {
       fontWeight: 200,
+      textAlign: "center",
+      fontSize: 17,
+    },
+    messageView__placeholderSub: {
+      color: "#C1C1C1",
+      fontSize: 14,
     },
     messageView__closeButton: {
       alignItems: "center",
@@ -111,6 +112,11 @@ const MessageView = () => {
     (state: RootState) => state.messages
   );
 
+  /**
+   * Close message view.
+   *
+   * @return {void}
+   */
   const handleViewClose = () => {
     dispatch(messagesSlice.actions.setSelected(null));
   };
@@ -143,16 +149,21 @@ const MessageView = () => {
         <div className={classes.messageView__placeholder}>
           <EmojiPeople className={classes.messageView__placeholderIcon} />
           <div className={classes.messageView__placeholderText}>
-            Hello there..!
+            Welcome to Mail Box dashboard.
+            <div className={classes.messageView__placeholderSub}>
+              Manage all your companies messages, of filter by a specific user
+            </div>
           </div>
         </div>
       ) : (
         <>
           <div className={classes.messageView__sender}>
             <div className={classes.messageView__senderDetails}>
-              <Avatar />
+              <Avatar style={{ background: generateColor(message.id) }}>
+                {message.sender.substring(0, 1)}
+              </Avatar>
               <span>{message.sender}</span>
-              <ChevronRight />
+              <ChevronRight fontSize="small" />
               <span>{message.receiver}</span>
             </div>
             <IconButton onClick={handleViewClose}>
@@ -168,9 +179,6 @@ const MessageView = () => {
               <IconButton onClick={handleDelete} size="small" color="inherit">
                 <Delete />
               </IconButton>
-              {/* <IconButton size="small" color="inherit">
-                <Reply />
-              </IconButton> */}
               <IconButton
                 onClick={() => window.print()}
                 size="small"
@@ -181,7 +189,6 @@ const MessageView = () => {
             </div>
           </div>
           <div className={classes.messageView__body}>{message.message}</div>
-          {/* <div className={classes.messageView__reply}></div> */}
         </>
       )}
     </div>

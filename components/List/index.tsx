@@ -1,5 +1,5 @@
 import ListItem from "./Item";
-import { createStyles, makeStyles, TextField } from "@material-ui/core";
+import { createStyles, makeStyles } from "@material-ui/core";
 import { RootState } from "~/store";
 import { useDispatch, useSelector } from "react-redux";
 import messagesSlice, {
@@ -8,12 +8,9 @@ import messagesSlice, {
 } from "~/store/slices/messages";
 import { Inbox } from "@material-ui/icons";
 import { isLoggedIn } from "~/store/slices/user";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { SnackbarContext } from "~/context/snackbar";
-import Login from "../Login";
-import { Autocomplete } from "@material-ui/lab";
-import { useApolloClient } from "@apollo/client";
-import { Users } from "~/graphql/user";
+import Login from "../Auth";
 import UserSearchField from "../Field/UserSearch";
 
 const useStyles = makeStyles((theme) =>
@@ -75,14 +72,6 @@ const useStyles = makeStyles((theme) =>
       borderBottom: "1px solid #e0e0e0",
       height: "65px",
     },
-    userSelect__inputRoot: {
-      background: "initial",
-    },
-    userSelect__input: {
-      background: "initial",
-      boxShadow: "none",
-      marginRight: "1em",
-    },
     userAvatar: {
       marginLeft: "auto",
 
@@ -105,31 +94,6 @@ const List = () => {
   const loggedIn = useSelector(isLoggedIn);
   const messages = useSelector(messagesList);
   const list = Array.isArray(messages) ? messages : messages[type];
-
-  const [loading, setLoading] = useState(false);
-  const [options, setOptions] = useState([]);
-  const [search, setSearch] = useState("");
-  const apollo = useApolloClient();
-
-  useEffect(() => {
-    setLoading(true);
-
-    const searchUsers = async () => {
-      const {
-        data: { users },
-      } = await apollo.query({
-        query: Users,
-        variables: {
-          q: search,
-        },
-      });
-
-      setOptions(users);
-      setLoading(false);
-    };
-
-    searchUsers();
-  }, [search]);
 
   /**
    *
@@ -174,38 +138,6 @@ const List = () => {
               label: "Users",
             }}
           />
-          // <Autocomplete
-          //   options={options}
-          //   loading={loading}
-          //   fullWidth
-          //   classes={{
-          //     root: classes.userSelect__inputRoot,
-          //     input: classes.userSelect__inputRoot,
-          //   }}
-          //   onInputChange={(e, value) => setSearch(value)}
-          //   onChange={(e, value) =>
-          //     dispatch(
-          //       messagesSlice.actions.setSenderId(value?.senderId ?? null)
-          //     )
-          //   }
-          //   getOptionLabel={(option) => option.senderId}
-          //   getOptionSelected={(option, value) =>
-          //     option.senderId === value.senderId
-          //   }
-          //   className={classes.userSelect__input}
-          //   renderInput={(params) => (
-          //     <TextField
-          //       {...params}
-          //       variant="filled"
-          //       fullWidth
-          //       label="Filter"
-          //       placeholder="Enter user name"
-          //       InputLabelProps={{
-          //         shrink: true,
-          //       }}
-          //     />
-          //   )}
-          // />
         )}
         <div className={classes.userAvatar}>
           <Login />
