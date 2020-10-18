@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { initializeApollo } from "~/lib/apolloClient";
 import { RootState } from "..";
 import messagesSlice from "./messages";
+import { GetUser, Login } from "~/graphql/user.graphql";
 
 const userSlice = createSlice({
   name: "user",
@@ -24,14 +25,7 @@ export const getUser = () => async (dispatch) => {
   const {
     data: { user },
   } = await apollo.query({
-    query: gql`
-      {
-        user {
-          id
-          senderId
-        }
-      }
-    `,
+    query: GetUser,
   });
 
   dispatch(messagesSlice.actions.setSenderId(user?.senderId ?? ""));
@@ -44,17 +38,7 @@ export const login = (id) => async (dispatch) => {
   const {
     data: { login },
   } = await apollo.mutate({
-    mutation: gql`
-      mutation Login($id: Int!) {
-        login(id: $id) {
-          accessToken
-          user {
-            id
-            senderId
-          }
-        }
-      }
-    `,
+    mutation: Login,
     variables: {
       id: Number(id),
     },
@@ -64,6 +48,8 @@ export const login = (id) => async (dispatch) => {
     localStorage.setItem("accessToken", `Bearer ${login.accessToken}`);
     dispatch(userSlice.actions.setUser(login.user));
   }
+
+  return login;
 };
 
 export const logout = () => (dispatch) => {

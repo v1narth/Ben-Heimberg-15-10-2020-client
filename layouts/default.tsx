@@ -2,6 +2,7 @@ import { useSubscription, gql } from "@apollo/client";
 import { createStyles, makeStyles } from "@material-ui/core";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import SnackbarProvider from "~/context/snackbar";
 import { RootState } from "~/store";
 import { fetchMessages, setCurrentList } from "~/store/slices/messages";
 import { getUser } from "~/store/slices/user";
@@ -55,11 +56,13 @@ const Default = ({ children }) => {
   return (
     <>
       <div>
-        <Header />
-        <div className={classes.root}>
-          <Drawer />
-          {children}
-        </div>
+        <SnackbarProvider>
+          <Header />
+          <div className={classes.root}>
+            <Drawer />
+            {children}
+          </div>
+        </SnackbarProvider>
       </div>
     </>
   );

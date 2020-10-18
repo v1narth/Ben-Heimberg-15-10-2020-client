@@ -8,12 +8,19 @@ import messagesSlice, {
 } from "~/store/slices/messages";
 import { Inbox } from "@material-ui/icons";
 import { isLoggedIn } from "~/store/slices/user";
+import { useContext } from "react";
+import { SnackbarContext } from "~/context/snackbar";
+import Login from "../Login";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
     listRoot: {
       position: "relative",
-      top: "-65px",
+      top: "-55px",
+
+      [theme.breakpoints.up("sm")]: {
+        top: "-65px",
+      },
     },
     list: {
       background: "#f7f7f7",
@@ -60,13 +67,21 @@ const useStyles = makeStyles((theme) =>
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      padding: "0 2em",
+      padding: "0 1em",
       borderBottom: "1px solid #e0e0e0",
       height: "65px",
     },
     userSelect__input: {
       background: "#f7f7f7",
       boxShadow: "none",
+      marginRight: "1em",
+    },
+    userAvatar: {
+      marginLeft: "auto",
+
+      [theme.breakpoints.up("md")]: {
+        display: "none",
+      },
     },
   })
 );
@@ -79,18 +94,37 @@ const List = () => {
     (state: RootState) => state.messages
   );
 
+  const { createSnackbar } = useContext(SnackbarContext);
   const loggedIn = useSelector(isLoggedIn);
-
   const messages = useSelector(messagesList);
   const list = Array.isArray(messages) ? messages : messages[type];
 
+  /**
+   *
+   * @param message
+   */
   const handleItemSelected = (message: Message) => {
     dispatch(messagesSlice.actions.setSelected(message));
   };
 
-  const handleMessageDelete = async (e, message) => {
+  /**
+   * Handles message deletion.
+   *
+   * @param e
+   * @param message
+   */
+  const handleMessageDelete = async (e, message: Message) => {
     e.stopPropagation();
-    dispatch(deleteMessage(message));
+
+    try {
+      await dispatch(deleteMessage(message));
+      createSnackbar("Message deleted successfully", { type: "success" });
+    } catch (e) {
+      createSnackbar(
+        "An error occurred during the message deletion. Try again.",
+        { type: "error" }
+      );
+    }
   };
 
   return (
@@ -106,12 +140,16 @@ const List = () => {
             InputLabelProps={{
               shrink: true,
             }}
+            type="number"
             value={senderId}
             onChange={({ target }) =>
               dispatch(messagesSlice.actions.setSenderId(target.value))
             }
           />
         )}
+        <div className={classes.userAvatar}>
+          <Login />
+        </div>
       </div>
       <div className={classes.list}>
         {!list.length && (

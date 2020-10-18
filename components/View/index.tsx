@@ -7,8 +7,9 @@ import {
 import { grey } from "@material-ui/core/colors";
 import { Delete, Reply, Print, Close, EmojiPeople } from "@material-ui/icons";
 import moment from "moment";
-import React from "react";
+import React, { useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { SnackbarContext } from "~/context/snackbar";
 import { RootState } from "~/store";
 import messagesSlice, { deleteMessage } from "~/store/slices/messages";
 
@@ -97,6 +98,7 @@ const useStyles = makeStyles((theme) =>
 const MessageView = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const { createSnackbar } = useContext(SnackbarContext);
 
   const { selected: message } = useSelector(
     (state: RootState) => state.messages
@@ -106,9 +108,22 @@ const MessageView = () => {
     dispatch(messagesSlice.actions.setSelected(null));
   };
 
-  const handleDelete = () => {
-    dispatch(deleteMessage(message));
-    handleViewClose();
+  /**
+   * Handles message delete.
+   * 
+   * @return {void}
+   */
+  const handleDelete = async () => {
+    try {
+      await dispatch(deleteMessage(message));
+      createSnackbar("Message deleted successfully", { type: "success" });
+      handleViewClose();
+    } catch (e) {
+      createSnackbar(
+        "An error occurred during the message deletion. Try again.",
+        { type: "error" }
+      );
+    }
   };
 
   return (

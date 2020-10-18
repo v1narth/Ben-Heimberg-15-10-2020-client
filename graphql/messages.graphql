@@ -1,0 +1,38 @@
+query FetchMessages {
+  messages {
+    ...MessagesFragment
+  }
+}
+
+query FetchUserMessages($id: Int) {
+  userMessages(id: $id) {
+    sent {
+      ...MessagesFragment
+    }
+
+    received {
+      ...MessagesFragment
+    }
+  }
+}
+
+mutation CreateMessage($data: MessageCreateInput!) {
+  createOneMessage(data: $data) {
+    ...MessagesFragment
+  }
+}
+
+mutation DeleteMessage($id: Int!) {
+  deleteOneMessage(where: { id: $id }) {
+    id
+  }
+}
+
+fragment MessagesFragment on Message {
+  id
+  sender
+  receiver
+  subject
+  message
+  createdAt
+}

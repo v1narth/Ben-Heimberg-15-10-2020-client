@@ -1,0 +1,16 @@
+query GetUser {
+  user {
+    id
+    senderId
+  }
+}
+
+mutation Login($id: Int!) {
+  login(id: $id) {
+    accessToken
+    user {
+      id
+      senderId
+    }
+  }
+}

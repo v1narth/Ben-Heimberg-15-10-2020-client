@@ -2,6 +2,12 @@ import { gql, QueryOptions } from "@apollo/client";
 import { createSlice, Dispatch } from "@reduxjs/toolkit";
 import { initializeApollo } from "~/lib/apolloClient";
 import { RootState } from "..";
+import {
+  FetchMessages,
+  FetchUserMessages,
+  CreateMessage,
+  DeleteMessage,
+} from "~/graphql/messages.graphql";
 
 const messagesSlice = createSlice({
   name: "messages",
@@ -43,6 +49,22 @@ export const messagesList = (state: RootState) =>
     : state.messages.list;
 
 /**
+ * Creates new message.
+ *
+ * @param message
+ */
+export const createMessageAsync = (message: Message) => async (dispatch) => {
+  const apolloClient = initializeApollo();
+
+  return await apolloClient.mutate({
+    mutation: CreateMessage,
+    variables: {
+      data: message,
+    },
+  });
+};
+
+/**
  * Delete message.
  *
  * @param {message}
@@ -69,22 +91,12 @@ export const deleteMessage = (message: Message) => async (
     );
   }
 
-  try {
-    await apolloClient.mutate({
-      mutation: gql`
-        mutation($id: Int!) {
-          deleteOneMessage(where: { id: $id }) {
-            id
-          }
-        }
-      `,
-      variables: {
-        id: Number(message.id),
-      },
-    });
-  } catch (e) {
-    console.error(e);
-  }
+  return await apolloClient.mutate({
+    mutation: DeleteMessage,
+    variables: {
+      id: Number(message.id),
+    },
+  });
 };
 
 /**
@@ -135,44 +147,13 @@ export const fetchMessages = (userId?: number) => async (
 
   let expect = userId ? "userMessages" : "messages";
 
-  const MESSAGES_FRAGMENT = gql`
-    fragment MessagesFragment on Message {
-      id
-      sender
-      receiver
-      subject
-      message
-      createdAt
-    }
-  `;
-
   const queries = {
     messages: {
-      query: gql`
-        {
-          messages {
-            ...MessagesFragment
-          }
-        }
-        ${MESSAGES_FRAGMENT}
-      `,
+      query: FetchMessages,
     } as QueryOptions,
 
     userMessages: {
-      query: gql`
-        query($id: Int) {
-          userMessages(id: $id) {
-            sent {
-              ...MessagesFragment
-            }
-
-            received {
-              ...MessagesFragment
-            }
-          }
-        }
-        ${MESSAGES_FRAGMENT}
-      `,
+      query: FetchUserMessages,
       variables: { id: userId },
     } as QueryOptions,
   };

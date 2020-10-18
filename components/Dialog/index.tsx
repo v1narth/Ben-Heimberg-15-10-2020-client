@@ -16,6 +16,11 @@ const DialogContainer = ({ activator, children }) => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
 
+  /**
+   * Handles activator click.
+   *
+   * @return {void}
+   */
   const handleActivatorClick = () => {
     setOpen((state) => !state);
   };
@@ -25,7 +30,7 @@ const DialogContainer = ({ activator, children }) => {
       <div className={classes.activator} onClick={handleActivatorClick}>
         {activator}
       </div>
-      <Dialog open={open} onClose={handleActivatorClick}>
+      <Dialog fullWidth open={open} onClose={handleActivatorClick}>
         {children({ setOpen })}
       </Dialog>
     </>

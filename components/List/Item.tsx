@@ -31,6 +31,7 @@ const useStyles = makeStyles((theme) =>
     },
     itemInfo__createdDate: {
       marginLeft: "auto",
+      fontSize: "12px",
     },
     itemInfo__avatar: {
       width: "30px",
@@ -62,15 +63,15 @@ const ITEM_BODY_LIMIT = 235;
 
 const ListItem = ({ data, onDelete }: { data: Message; onDelete }) => {
   const classes = useStyles();
-
   const { senderId, type } = useSelector((store: RootState) => store.messages);
+  const { user } = useSelector((state: RootState) => state.user);
 
   return (
     <div className={classes.listItem}>
       <div className={classes.listItem__info}>
         <Avatar className={classes.itemInfo__avatar} />
         <span className={classes.itemInfo__sender}>
-          {senderId && type === "sent" ? data.receiver : data.sender}
+          {(senderId || user) && type === "sent" ? data.receiver : data.sender}
         </span>
         <span className={classes.itemInfo__createdDate}>
           {moment(data.createdAt).fromNow()}

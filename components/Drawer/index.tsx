@@ -1,4 +1,5 @@
 import {
+  Badge,
   Button,
   createStyles,
   Divider,
@@ -89,6 +90,9 @@ const useStyles = makeStyles((theme) =>
 const Drawer = () => {
   const classes = useStyles();
 
+  const theme = useTheme();
+  const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
+
   const drawerItems: DrawerItem[] = [
     {
       name: "received",
@@ -102,20 +106,20 @@ const Drawer = () => {
     },
   ];
 
+  const dispatch = useDispatch();
+  const messages = useSelector(messagesList);
   const { type: selectedTab } = useSelector(
     (state: RootState) => state.messages
   );
 
-  const messages = useSelector(messagesList);
-
-  const dispatch = useDispatch();
-
+  /**
+   * Handles tab click.
+   *
+   * @param item
+   */
   const handleTabSelected = (item: DrawerItem) => {
     dispatch(messagesSlice.actions.setType(item.name));
   };
-
-  const theme = useTheme();
-  const BPmd = useMediaQuery(theme.breakpoints.up("md"));
 
   return (
     <MUIDrawer
@@ -134,7 +138,7 @@ const Drawer = () => {
       <Divider />
       <div className={classes.compose__button}>
         <Link href="/compose">
-          {BPmd ? (
+          {isMdUp ? (
             <Button variant="contained" color="primary" fullWidth>
               Compose new
             </Button>
