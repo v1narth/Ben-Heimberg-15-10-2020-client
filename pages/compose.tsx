@@ -182,7 +182,7 @@ const Compose = () => {
                   }
                   inputProps={{
                     name: "sender",
-                    label: "Sender",
+                    label: "From",
                     error: !!errors["sender"],
                     helperText: errors["sender"],
                   }}
@@ -198,7 +198,7 @@ const Compose = () => {
                 }
                 inputProps={{
                   name: "receiver",
-                  label: "Receiver",
+                  label: "To",
                   error: !!errors["receiver"],
                   helperText: errors["receiver"],
                 }}
