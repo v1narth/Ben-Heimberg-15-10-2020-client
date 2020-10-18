@@ -21,7 +21,7 @@ export const FetchMessages = gql`
 `;
 
 export const FetchUserMessages = gql`
-  query($id: Int) {
+  query($id: String) {
     userMessages(id: $id) {
       sent {
         ...MessagesFragment

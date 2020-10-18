@@ -5,7 +5,14 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import { grey } from "@material-ui/core/colors";
-import { Delete, Reply, Print, Close, EmojiPeople } from "@material-ui/icons";
+import {
+  Delete,
+  Reply,
+  Print,
+  Close,
+  EmojiPeople,
+  ChevronRight,
+} from "@material-ui/icons";
 import moment from "moment";
 import React, { useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -110,7 +117,7 @@ const MessageView = () => {
 
   /**
    * Handles message delete.
-   * 
+   *
    * @return {void}
    */
   const handleDelete = async () => {
@@ -145,6 +152,8 @@ const MessageView = () => {
             <div className={classes.messageView__senderDetails}>
               <Avatar />
               <span>{message.sender}</span>
+              <ChevronRight />
+              <span>{message.receiver}</span>
             </div>
             <IconButton onClick={handleViewClose}>
               <Close />

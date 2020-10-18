@@ -127,8 +127,8 @@ const Compose = () => {
     try {
       await createMessage({
         ...messageData,
-        sender: messageData.sender && Number(messageData.sender),
-        receiver: messageData.receiver && Number(messageData.receiver),
+        sender: messageData.sender,
+        receiver: messageData.receiver,
       });
 
       resetFields();
@@ -178,12 +178,12 @@ const Compose = () => {
                 <FormTextField
                   name="sender"
                   label="Sender"
-                  type="number"
-                  InputProps={{
-                    inputProps: {
-                      min: 1,
-                    },
-                  }}
+                  // type="number"
+                  // InputProps={{
+                  //   inputProps: {
+                  //     min: 1,
+                  //   },
+                  // }}
                   errors={errors}
                   disabled={loading}
                   value={messageData.sender}
@@ -196,12 +196,12 @@ const Compose = () => {
               <FormTextField
                 name="receiver"
                 label="Receiver"
-                type="number"
-                InputProps={{
-                  inputProps: {
-                    min: 1,
-                  },
-                }}
+                // type="number"
+                // InputProps={{
+                //   inputProps: {
+                //     min: 1,
+                //   },
+                // }}
                 errors={errors}
                 disabled={loading}
                 value={messageData.receiver}

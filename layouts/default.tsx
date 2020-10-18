@@ -31,7 +31,7 @@ const Default = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    dispatch(fetchMessages(Number(user?.senderId ?? senderId)));
+    dispatch(fetchMessages(user?.senderId ?? senderId));
   }, [senderId, user]);
 
   const { data: { messageCreated } = { data: null } } = useSubscription(gql`

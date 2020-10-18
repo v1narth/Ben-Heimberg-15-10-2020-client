@@ -108,9 +108,10 @@ const Drawer = () => {
 
   const dispatch = useDispatch();
   const messages = useSelector(messagesList);
-  const { type: selectedTab } = useSelector(
-    (state: RootState) => state.messages
-  );
+  const {
+    messages: { type: selectedTab, senderId },
+    user: { user },
+  } = useSelector((state: RootState) => state);
 
   /**
    * Handles tab click.
@@ -150,32 +151,45 @@ const Drawer = () => {
         </Link>
       </div>
       <List>
-        {drawerItems.map((item, index) => (
-          <Link key={index} href="/">
-            <ListItem
-              onClick={() => handleTabSelected(item)}
-              button
-              selected={item.name === selectedTab}
-              classes={{
-                selected: classes.listItemSelected,
-                root: classes.listItem,
-              }}
-            >
-              <ListItemIcon className={classes.listItemIcon}>
-                {item.icon}
-              </ListItemIcon>
-              <ListItemText primary={item.title} />
-              <ListItemText
-                className={classes.secondaryText}
-                secondary={
-                  Array.isArray(messages)
-                    ? messages.length
-                    : messages[item.name].length
-                }
-              />
-            </ListItem>
-          </Link>
-        ))}
+        {user || senderId ? (
+          drawerItems.map((item, index) => (
+            <Link key={index} href="/">
+              <ListItem
+                onClick={() => handleTabSelected(item)}
+                button
+                selected={item.name === selectedTab}
+                classes={{
+                  selected: classes.listItemSelected,
+                  root: classes.listItem,
+                }}
+              >
+                <ListItemIcon className={classes.listItemIcon}>
+                  {item.icon}
+                </ListItemIcon>
+                <ListItemText primary={item.title} />
+                <ListItemText
+                  className={classes.secondaryText}
+                  secondary={
+                    Array.isArray(messages)
+                      ? messages.length
+                      : messages[item.name].length
+                  }
+                />
+              </ListItem>
+            </Link>
+          ))
+        ) : (
+          <ListItem>
+            <ListItemIcon>
+              <Inbox />
+            </ListItemIcon>
+            <ListItemText primary="All Messages" />
+            <ListItemText
+              className={classes.secondaryText}
+              secondary={(messages as []).length}
+            />
+          </ListItem>
+        )}
       </List>
     </MUIDrawer>
   );

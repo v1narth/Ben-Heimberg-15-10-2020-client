@@ -136,11 +136,10 @@ const List = () => {
             variant="filled"
             fullWidth
             label="Filter"
-            placeholder="Enter user id"
+            placeholder="Enter user name"
             InputLabelProps={{
               shrink: true,
             }}
-            type="number"
             value={senderId}
             onChange={({ target }) =>
               dispatch(messagesSlice.actions.setSenderId(target.value))

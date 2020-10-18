@@ -10,7 +10,7 @@ export const GetUser = gql`
 `;
 
 export const Login = gql`
-  mutation($id: Int!) {
+  mutation($id: String!) {
     login(id: $id) {
       accessToken
       user {

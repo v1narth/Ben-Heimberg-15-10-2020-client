@@ -6,7 +6,7 @@ import {
   MenuItem,
 } from "@material-ui/core";
 import { grey } from "@material-ui/core/colors";
-import { Delete, MoreVert } from "@material-ui/icons";
+import { ChevronRight, Delete, MoreVert } from "@material-ui/icons";
 import { RootState } from "~/store";
 import MenuContainer from "../Menu";
 import moment from "moment";
@@ -38,7 +38,10 @@ const useStyles = makeStyles((theme) =>
       height: "30px",
       marginRight: ".5em",
     },
-    itemInfo__sender: {},
+    itemInfo__sender: {
+      display: "flex",
+      alignItems: "center",
+    },
 
     itemBody__optionsIcon: {
       display: "flex",
@@ -71,8 +74,21 @@ const ListItem = ({ data, onDelete }: { data: Message; onDelete }) => {
       <div className={classes.listItem__info}>
         <Avatar className={classes.itemInfo__avatar} />
         <span className={classes.itemInfo__sender}>
-          {(senderId || user) && type === "sent" ? data.receiver : data.sender}
+          {user || senderId ? (
+            type === "sent" ? (
+              data.receiver
+            ) : (
+              data.sender
+            )
+          ) : (
+            <>
+              <span>{data.sender}</span>
+              <ChevronRight />
+              <span>{data.receiver}</span>
+            </>
+          )}
         </span>
+
         <span className={classes.itemInfo__createdDate}>
           {moment(data.createdAt).fromNow()}
         </span>

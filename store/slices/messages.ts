@@ -140,7 +140,7 @@ export const setCurrentList = (value: Message) => (
 /**
  * Async operations.
  */
-export const fetchMessages = (userId?: number) => async (
+export const fetchMessages = (userId?: string) => async (
   dispatch: Dispatch
 ) => {
   const apolloClient = initializeApollo();
@@ -154,7 +154,7 @@ export const fetchMessages = (userId?: number) => async (
 
     userMessages: {
       query: FetchUserMessages,
-      variables: { id: userId },
+      variables: { id: String(userId) },
     } as QueryOptions,
   };
 

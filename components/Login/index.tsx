@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) =>
 
 const Login = () => {
   const classes = useStyles();
-  const [id, setId] = useState(null);
+  const [id, setId] = useState("");
   const [error, setError] = useState(null);
   const { createSnackbar } = useContext(SnackbarContext);
 
@@ -47,13 +47,13 @@ const Login = () => {
     event.preventDefault();
 
     if (!id) {
-      setError("Cannot login without a user id");
+      setError("Cannot login without a user name");
       return;
     }
 
     const response = await dispatch(login(id));
     if (!response) {
-      createSnackbar(`Cannot find user with id ${id}`, { type: "error" });
+      createSnackbar(`Cannot find user with name ${id}`, { type: "error" });
       setError("");
       return;
     }
@@ -83,18 +83,12 @@ const Login = () => {
                 <TextField
                   variant="filled"
                   label="Login as"
-                  placeholder="User id"
+                  placeholder="User name"
                   InputLabelProps={{
                     shrink: true,
                   }}
-                  type="number"
                   error={!!error}
                   helperText={error}
-                  InputProps={{
-                    inputProps: {
-                      min: 1,
-                    },
-                  }}
                   fullWidth
                   autoFocus
                   value={id}

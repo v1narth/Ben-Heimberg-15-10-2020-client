@@ -40,7 +40,7 @@ export const login = (id) => async (dispatch) => {
   } = await apollo.mutate({
     mutation: Login,
     variables: {
-      id: Number(id),
+      id,
     },
   });
 
