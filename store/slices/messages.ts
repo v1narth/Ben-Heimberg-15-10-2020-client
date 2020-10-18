@@ -1,13 +1,13 @@
 import { gql, QueryOptions } from "@apollo/client";
 import { createSlice, Dispatch } from "@reduxjs/toolkit";
+import {
+  // CreateMessage,
+  // DeleteMessage,
+  FetchMessages,
+  // FetchUserMessages,
+} from "~/graphql/message";
 import { initializeApollo } from "~/lib/apolloClient";
 import { RootState } from "..";
-import {
-  FetchMessages,
-  FetchUserMessages,
-  CreateMessage,
-  DeleteMessage,
-} from "~/graphql/messages.graphql";
 
 const messagesSlice = createSlice({
   name: "messages",
@@ -56,12 +56,12 @@ export const messagesList = (state: RootState) =>
 export const createMessageAsync = (message: Message) => async (dispatch) => {
   const apolloClient = initializeApollo();
 
-  return await apolloClient.mutate({
-    mutation: CreateMessage,
-    variables: {
-      data: message,
-    },
-  });
+  // return await apolloClient.mutate({
+  //   mutation: CreateMessage,
+  //   variables: {
+  //     data: message,
+  //   },
+  // });
 };
 
 /**
@@ -91,12 +91,12 @@ export const deleteMessage = (message: Message) => async (
     );
   }
 
-  return await apolloClient.mutate({
-    mutation: DeleteMessage,
-    variables: {
-      id: Number(message.id),
-    },
-  });
+  // return await apolloClient.mutate({
+  //   mutation: DeleteMessage,
+  //   variables: {
+  //     id: Number(message.id),
+  //   },
+  // });
 };
 
 /**
@@ -152,10 +152,10 @@ export const fetchMessages = (userId?: number) => async (
       query: FetchMessages,
     } as QueryOptions,
 
-    userMessages: {
-      query: FetchUserMessages,
-      variables: { id: userId },
-    } as QueryOptions,
+    // userMessages: {
+    //   query: FetchUserMessages,
+    //   variables: { id: userId },
+    // } as QueryOptions,
   };
 
   const { data } = await apolloClient.query(queries[expect]);

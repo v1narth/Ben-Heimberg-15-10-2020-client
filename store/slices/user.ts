@@ -1,9 +1,9 @@
 import { gql } from "@apollo/client";
 import { createSlice } from "@reduxjs/toolkit";
+import { GetUser, Login } from "~/graphql/user";
 import { initializeApollo } from "~/lib/apolloClient";
 import { RootState } from "..";
 import messagesSlice from "./messages";
-import { GetUser, Login } from "~/graphql/user.graphql";
 
 const userSlice = createSlice({
   name: "user",
