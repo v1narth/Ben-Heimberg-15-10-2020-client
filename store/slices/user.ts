@@ -46,6 +46,7 @@ export const login = (id) => async (dispatch) => {
 
   if (login) {
     localStorage.setItem("accessToken", `Bearer ${login.accessToken}`);
+    dispatch(messagesSlice.actions.setSenderId(""));
     dispatch(userSlice.actions.setUser(login.user));
   }
 

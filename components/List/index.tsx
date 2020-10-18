@@ -8,9 +8,12 @@ import messagesSlice, {
 } from "~/store/slices/messages";
 import { Inbox } from "@material-ui/icons";
 import { isLoggedIn } from "~/store/slices/user";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { SnackbarContext } from "~/context/snackbar";
 import Login from "../Login";
+import { Autocomplete } from "@material-ui/lab";
+import { useApolloClient } from "@apollo/client";
+import { Users } from "~/graphql/user";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -71,8 +74,11 @@ const useStyles = makeStyles((theme) =>
       borderBottom: "1px solid #e0e0e0",
       height: "65px",
     },
+    userSelect__inputRoot: {
+      background: "initial",
+    },
     userSelect__input: {
-      background: "#f7f7f7",
+      background: "initial",
       boxShadow: "none",
       marginRight: "1em",
     },
@@ -98,6 +104,30 @@ const List = () => {
   const loggedIn = useSelector(isLoggedIn);
   const messages = useSelector(messagesList);
   const list = Array.isArray(messages) ? messages : messages[type];
+
+  const [loading, setLoading] = useState(false);
+  const [options, setOptions] = useState([]);
+  const [search, setSearch] = useState("");
+  const apollo = useApolloClient();
+
+  useEffect(() => {
+    setLoading(true);
+
+    const searchUsers = async () => {
+      const {
+        data: { users },
+      } = await apollo.query({
+        query: Users,
+        variables: {
+          q: search,
+        },
+      });
+
+      setOptions(users);
+    };
+
+    searchUsers();
+  }, [search]);
 
   /**
    *
@@ -131,19 +161,37 @@ const List = () => {
     <div className={classes.listRoot}>
       <div className={classes.userSelect}>
         {!loggedIn && (
-          <TextField
-            className={classes.userSelect__input}
-            variant="filled"
+          <Autocomplete
+            options={options}
+            loading={loading}
             fullWidth
-            label="Filter"
-            placeholder="Enter user name"
-            InputLabelProps={{
-              shrink: true,
+            classes={{
+              root: classes.userSelect__inputRoot,
+              input: classes.userSelect__inputRoot,
             }}
-            value={senderId}
-            onChange={({ target }) =>
-              dispatch(messagesSlice.actions.setSenderId(target.value))
+            onInputChange={(e, value) => setSearch(value)}
+            onChange={(e, value) =>
+              dispatch(
+                messagesSlice.actions.setSenderId(value?.senderId ?? null)
+              )
             }
+            getOptionLabel={(option) => option.senderId}
+            getOptionSelected={(option, value) =>
+              option.senderId === value.senderId
+            }
+            className={classes.userSelect__input}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                variant="filled"
+                fullWidth
+                label="Filter"
+                placeholder="Enter user name"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+            )}
           />
         )}
         <div className={classes.userAvatar}>

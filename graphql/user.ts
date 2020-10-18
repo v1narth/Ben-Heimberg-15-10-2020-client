@@ -9,6 +9,15 @@ export const GetUser = gql`
   }
 `;
 
+export const Users = gql`
+  query($q: String) {
+    users(q: $q) {
+      id
+      senderId
+    }
+  }
+`;
+
 export const Login = gql`
   mutation($id: String!) {
     login(id: $id) {

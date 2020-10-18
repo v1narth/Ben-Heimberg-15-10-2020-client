@@ -178,16 +178,11 @@ const Compose = () => {
                 <FormTextField
                   name="sender"
                   label="Sender"
-                  // type="number"
-                  // InputProps={{
-                  //   inputProps: {
-                  //     min: 1,
-                  //   },
-                  // }}
                   errors={errors}
                   disabled={loading}
                   value={messageData.sender}
                   onChange={handleFieldChange}
+                  placeholder="Enter an existing / new user"
                 />
               </Grid>
             )}
@@ -196,16 +191,11 @@ const Compose = () => {
               <FormTextField
                 name="receiver"
                 label="Receiver"
-                // type="number"
-                // InputProps={{
-                //   inputProps: {
-                //     min: 1,
-                //   },
-                // }}
                 errors={errors}
                 disabled={loading}
                 value={messageData.receiver}
                 onChange={handleFieldChange}
+                placeholder="Enter an existing / new user"
               />
             </Grid>
           </Grid>
