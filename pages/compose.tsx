@@ -51,7 +51,6 @@ const FormTextField = ({
       key={name}
       error={!!errors[name]}
       helperText={errors[name]}
-      i
       name={name}
       label={label}
       placeholder={`Enter ${label}`}
