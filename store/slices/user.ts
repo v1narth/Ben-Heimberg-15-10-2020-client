@@ -1,6 +1,5 @@
-import { gql } from "@apollo/client";
 import { createSlice } from "@reduxjs/toolkit";
-import { GetUser, Login } from "~/graphql/user";
+import { GetUser, Login, Register } from "~/graphql/user";
 import { initializeApollo } from "~/lib/apolloClient";
 import { RootState } from "..";
 import messagesSlice from "./messages";
@@ -19,6 +18,11 @@ const userSlice = createSlice({
 
 export const isLoggedIn = (state: RootState) => !!state.user.user;
 
+/**
+ * Get current user.
+ *
+ * @return {void}
+ */
 export const getUser = () => async (dispatch) => {
   const apollo = initializeApollo();
 
@@ -32,6 +36,12 @@ export const getUser = () => async (dispatch) => {
   dispatch(userSlice.actions.setUser(user));
 };
 
+/**
+ * Log user in.
+ *
+ * @param id
+ * @return {Promise}
+ */
 export const login = (id) => async (dispatch) => {
   const apollo = initializeApollo();
 
@@ -53,6 +63,28 @@ export const login = (id) => async (dispatch) => {
   return login;
 };
 
+/**
+ * Register new user
+ *
+ * @param id
+ * @return {Promise}
+ */
+export const register = (id) => async (dispatch) => {
+  const apolloClient = initializeApollo();
+
+  return await apolloClient.mutate({
+    mutation: Register,
+    variables: {
+      id,
+    },
+  });
+};
+
+/**
+ * Log user out.
+ *
+ * @return {void}
+ */
 export const logout = () => (dispatch) => {
   localStorage.removeItem("accessToken");
   dispatch(userSlice.actions.setUser(null));

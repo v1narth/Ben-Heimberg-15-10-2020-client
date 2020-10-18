@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { SnackbarContext } from "~/context/snackbar";
 import { RootState } from "~/store";
 import { createMessageAsync } from "~/store/slices/messages";
+import UserSearchField from "~/components/Field/UserSearch";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -92,13 +93,12 @@ const Compose = () => {
    *
    * @return {void}
    */
-  const handleFieldChange = (event) => {
-    const { name, value } = event.target;
-    setMessageData((data) => ({ ...data, [name]: value }));
+  const handleFieldChange = (fieldName, value) => {
+    setMessageData((data) => ({ ...data, [fieldName]: value }));
 
-    if (errors[name] && value) {
+    if (errors[fieldName] && value) {
       setErrors(() => {
-        delete errors[name];
+        delete errors[fieldName];
         return errors;
       });
     }
@@ -175,27 +175,33 @@ const Compose = () => {
           <Grid container spacing={3}>
             {!user && (
               <Grid item xs={12} md={6}>
-                <FormTextField
-                  name="sender"
-                  label="Sender"
-                  errors={errors}
-                  disabled={loading}
+                <UserSearchField
                   value={messageData.sender}
-                  onChange={handleFieldChange}
-                  placeholder="Enter an existing / new user"
+                  onChange={(e, value) =>
+                    handleFieldChange("sender", value?.senderId)
+                  }
+                  inputProps={{
+                    name: "sender",
+                    label: "Sender",
+                    error: !!errors["sender"],
+                    helperText: errors["sender"],
+                  }}
                 />
               </Grid>
             )}
 
             <Grid item xs={12} md={6}>
-              <FormTextField
-                name="receiver"
-                label="Receiver"
-                errors={errors}
-                disabled={loading}
+              <UserSearchField
                 value={messageData.receiver}
-                onChange={handleFieldChange}
-                placeholder="Enter an existing / new user"
+                onChange={(e, value) =>
+                  handleFieldChange("receiver", value?.senderId)
+                }
+                inputProps={{
+                  name: "receiver",
+                  label: "Receiver",
+                  error: !!errors["receiver"],
+                  helperText: errors["receiver"],
+                }}
               />
             </Grid>
           </Grid>
@@ -208,7 +214,9 @@ const Compose = () => {
                 errors={errors}
                 disabled={loading}
                 value={messageData.subject}
-                onChange={handleFieldChange}
+                onChange={({ target }) =>
+                  handleFieldChange("subject", target.value)
+                }
               />
             </Grid>
           </Grid>
@@ -223,7 +231,9 @@ const Compose = () => {
               errors={errors}
               disabled={loading}
               value={messageData.message}
-              onChange={handleFieldChange}
+              onChange={({ target }) =>
+                handleFieldChange("message", target.value)
+              }
             />
           </div>
           <div>

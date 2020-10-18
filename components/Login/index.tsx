@@ -8,7 +8,8 @@ import {
   Button,
   makeStyles,
   createStyles,
-  Grid,
+  CardActions,
+  Divider,
 } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import React, { useContext, useEffect, useState } from "react";
@@ -16,14 +17,13 @@ import { useSelector, useDispatch } from "react-redux";
 import { SnackbarContext } from "~/context/snackbar";
 import { Users } from "~/graphql/user";
 import { RootState } from "~/store";
-import messagesSlice from "~/store/slices/messages";
-import { login, logout } from "~/store/slices/user";
+import { login, logout, register } from "~/store/slices/user";
 import DialogContainer from "../Dialog";
+import UserSearchField from "../Field/UserSearch";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
     loginContainer: {
-      padding: "1em",
       width: "100%",
     },
     loginForm: {
@@ -42,22 +42,26 @@ const useStyles = makeStyles((theme) =>
       boxShadow: "none",
       marginRight: "1em",
     },
+    position: {
+      marginLeft: "auto",
+    },
   })
 );
 
 const Login = () => {
   const classes = useStyles();
+
   const [id, setId] = useState("");
+  const [action, setAction] = useState<"login" | "register">("login");
   const [error, setError] = useState(null);
-  const { createSnackbar } = useContext(SnackbarContext);
-
-  const { user } = useSelector((state: RootState) => state.user);
-  const { senderId } = useSelector((state: RootState) => state.messages);
-
   const [loading, setLoading] = useState(false);
   const [options, setOptions] = useState([]);
   const [search, setSearch] = useState("");
+
   const apollo = useApolloClient();
+  const dispatch = useDispatch();
+  const { createSnackbar } = useContext(SnackbarContext);
+  const { user } = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
     setLoading(true);
@@ -73,12 +77,11 @@ const Login = () => {
       });
 
       setOptions(users);
+      setLoading(false);
     };
 
     searchUsers();
   }, [search]);
-
-  const dispatch = useDispatch();
 
   const handleLogin = async (event, setOpen) => {
     event.preventDefault();
@@ -95,89 +98,118 @@ const Login = () => {
       return;
     }
 
+    setOpen(false);
     setError("");
     setId(null);
-    setOpen(false);
   };
 
-  const handleLogout = (setOpen) => {
+  const handleRegister = async (e) => {
+    e.preventDefault();
+
+    if (!id) {
+      setError("This field is required");
+    }
+
+    try {
+      const {
+        data: { createOneUser },
+      } = (await dispatch(register(id))) as any;
+      createSnackbar(
+        `User ${createOneUser.senderId} has been successfully created`,
+        { type: "success" }
+      );
+
+      setAction("login");
+      setId("");
+    } catch (e) {
+      createSnackbar(
+        "An error occurred, please check the field values, and try again.",
+        { type: "error" }
+      );
+    }
+  };
+
+  const handleLogout = () => {
     dispatch(logout());
     setId(null);
-    setOpen(false);
   };
 
   return (
     <>
-      <DialogContainer activator={<Avatar>{user && user.senderId}</Avatar>}>
+      <DialogContainer
+        activator={<Avatar>{user && user.senderId.substring(0, 1)}</Avatar>}
+      >
         {({ setOpen }) => (
           <Card className={classes.loginContainer}>
-            <CardHeader title="Login" />
-            <CardContent>
-              <form
-                onSubmit={(e) => handleLogin(e, setOpen)}
-                className={classes.loginForm}
-              >
-                <Autocomplete
-                  options={options}
-                  loading={loading}
-                  fullWidth
-                  classes={{
-                    root: classes.userSelect__inputRoot,
-                    input: classes.userSelect__inputRoot,
-                  }}
-                  onInputChange={(e, value) => setSearch(value)}
-                  onChange={(e, value) => setId(value?.senderId ?? null)}
-                  getOptionLabel={(option) => option.senderId}
-                  getOptionSelected={(option, value) =>
-                    option.senderId === value.senderId
-                  }
-                  className={classes.userSelect__input}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      variant="filled"
-                      fullWidth
-                      error={error}
-                      helperText={error}
-                      label="Filter"
-                      placeholder="Enter user name"
-                      InputLabelProps={{
-                        shrink: true,
+            {action === "login" ? (
+              <>
+                <CardHeader title={user ? "Switch user" : "Login"} />
+                <form
+                  onSubmit={(e) => handleLogin(e, setOpen)}
+                  className={classes.loginForm}
+                >
+                  <CardContent>
+                    <UserSearchField
+                      value={id}
+                      onChange={(e, value) => setId(value?.senderId ?? "")}
+                      inputProps={{
+                        label: "User",
                       }}
                     />
-                  )}
-                />
-
-                <Grid
-                  className={classes.loginButtons}
-                  container
-                  justify="space-between"
-                >
-                  <Grid item xs={12} md={2}>
-                    <Button
-                      type="submit"
-                      color="primary"
-                      variant="contained"
-                      fullWidth
-                    >
-                      Login
+                  </CardContent>
+                  <Divider />
+                  <CardActions disableSpacing>
+                    <Button type="submit" color="primary">
+                      {user ? "Switch" : "Login"}
                     </Button>
-                  </Grid>
-                  <Grid item xs={12} md={2}>
                     {user && (
-                      <Button
-                        onClick={() => handleLogout(setOpen)}
-                        color="secondary"
-                        variant="contained"
-                        fullWidth
-                      >
+                      <Button onClick={() => handleLogout()} color="secondary">
                         Logout
                       </Button>
                     )}
-                  </Grid>
-                </Grid>
-              </form>
-            </CardContent>
+
+                    <Button
+                      className={classes.position}
+                      onClick={() => setAction("register")}
+                      color="secondary"
+                    >
+                      Create New
+                    </Button>
+                  </CardActions>
+                </form>
+              </>
+            ) : (
+              <>
+                <form onSubmit={handleRegister}>
+                  <CardHeader title="Create user" />
+                  <CardContent>
+                    <TextField
+                      variant="filled"
+                      placeholder="User name"
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      label="Name"
+                      onChange={({ target }) => setId(target.value)}
+                      fullWidth
+                    />
+                  </CardContent>
+                  <Divider />
+                  <CardActions disableSpacing>
+                    <Button color="primary" type="submit">
+                      Create
+                    </Button>
+                    <Button
+                      className={classes.position}
+                      color="secondary"
+                      onClick={() => setAction("login")}
+                    >
+                      Back to Login
+                    </Button>
+                  </CardActions>
+                </form>
+              </>
+            )}
           </Card>
         )}
       </DialogContainer>

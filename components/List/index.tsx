@@ -8,12 +8,13 @@ import messagesSlice, {
 } from "~/store/slices/messages";
 import { Inbox } from "@material-ui/icons";
 import { isLoggedIn } from "~/store/slices/user";
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { SnackbarContext } from "~/context/snackbar";
 import Login from "../Login";
 import { Autocomplete } from "@material-ui/lab";
 import { useApolloClient } from "@apollo/client";
 import { Users } from "~/graphql/user";
+import UserSearchField from "../Field/UserSearch";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -124,6 +125,7 @@ const List = () => {
       });
 
       setOptions(users);
+      setLoading(false);
     };
 
     searchUsers();
@@ -161,38 +163,49 @@ const List = () => {
     <div className={classes.listRoot}>
       <div className={classes.userSelect}>
         {!loggedIn && (
-          <Autocomplete
-            options={options}
-            loading={loading}
-            fullWidth
-            classes={{
-              root: classes.userSelect__inputRoot,
-              input: classes.userSelect__inputRoot,
-            }}
-            onInputChange={(e, value) => setSearch(value)}
+          <UserSearchField
+            value={senderId ?? ""}
             onChange={(e, value) =>
               dispatch(
                 messagesSlice.actions.setSenderId(value?.senderId ?? null)
               )
             }
-            getOptionLabel={(option) => option.senderId}
-            getOptionSelected={(option, value) =>
-              option.senderId === value.senderId
-            }
-            className={classes.userSelect__input}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                variant="filled"
-                fullWidth
-                label="Filter"
-                placeholder="Enter user name"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-            )}
+            inputProps={{
+              label: "Users",
+            }}
           />
+          // <Autocomplete
+          //   options={options}
+          //   loading={loading}
+          //   fullWidth
+          //   classes={{
+          //     root: classes.userSelect__inputRoot,
+          //     input: classes.userSelect__inputRoot,
+          //   }}
+          //   onInputChange={(e, value) => setSearch(value)}
+          //   onChange={(e, value) =>
+          //     dispatch(
+          //       messagesSlice.actions.setSenderId(value?.senderId ?? null)
+          //     )
+          //   }
+          //   getOptionLabel={(option) => option.senderId}
+          //   getOptionSelected={(option, value) =>
+          //     option.senderId === value.senderId
+          //   }
+          //   className={classes.userSelect__input}
+          //   renderInput={(params) => (
+          //     <TextField
+          //       {...params}
+          //       variant="filled"
+          //       fullWidth
+          //       label="Filter"
+          //       placeholder="Enter user name"
+          //       InputLabelProps={{
+          //         shrink: true,
+          //       }}
+          //     />
+          //   )}
+          // />
         )}
         <div className={classes.userAvatar}>
           <Login />

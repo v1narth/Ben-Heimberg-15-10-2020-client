@@ -179,16 +179,18 @@ const Drawer = () => {
             </Link>
           ))
         ) : (
-          <ListItem>
-            <ListItemIcon>
-              <Inbox />
-            </ListItemIcon>
-            <ListItemText primary="All Messages" />
-            <ListItemText
-              className={classes.secondaryText}
-              secondary={(messages as []).length}
-            />
-          </ListItem>
+          <Link href="/">
+            <ListItem>
+              <ListItemIcon>
+                <Inbox />
+              </ListItemIcon>
+              <ListItemText primary="All Messages" />
+              <ListItemText
+                className={classes.secondaryText}
+                secondary={(messages as []).length}
+              />
+            </ListItem>
+          </Link>
         )}
       </List>
     </MUIDrawer>

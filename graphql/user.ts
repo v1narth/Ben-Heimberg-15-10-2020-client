@@ -29,3 +29,12 @@ export const Login = gql`
     }
   }
 `;
+
+export const Register = gql`
+  mutation($id: String!) {
+    createOneUser(data: { senderId: $id }) {
+      id
+      senderId
+    }
+  }
+`;

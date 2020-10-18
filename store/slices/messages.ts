@@ -19,7 +19,7 @@ const messagesSlice = createSlice({
       sent: [] as Message[],
     },
     selected: null as Message | null,
-    senderId: "" as string | number,
+    senderId: "",
   },
   reducers: {
     setList: (state, action) => {
